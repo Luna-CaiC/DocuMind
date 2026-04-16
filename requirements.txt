@@ -10,3 +10,4 @@ sentence-transformers
 pymupdf
 Pillow
 python-docx
+protobuf<=3.20.3
