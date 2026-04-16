@@ -485,6 +485,59 @@ div[data-baseweb="notification"] {
     margin: 14px 0 !important;
 }
 
+/* ── User Message Bubble (Right Aligned) ─────────────────────────── */
+[data-testid="stChatMessage"]:has(.dm-user-hook) {
+    flex-direction: row-reverse !important;
+    gap: 8px !important;
+    align-items: center !important; /* Forces Avatar and Bubble to be vertically level */
+}
+
+/* Strip native margins pushing the avatar out of place when reversed */
+[data-testid="stChatMessage"]:has(.dm-user-hook) [data-testid="stChatAvatar"] {
+    margin: 0 !important;
+}
+
+/* Make the message text container stretch and align items right */
+[data-testid="stChatMessage"]:has(.dm-user-hook) > div:last-child {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    width: 100% !important;
+    flex-grow: 1 !important;
+}
+
+/* Style the actual text message containers (exclude the hook) */
+[data-testid="stChatMessage"]:has(.dm-user-hook) [data-testid="stMarkdownContainer"]:not(:has(.dm-user-hook)) {
+    display: inline-block !important; /* shrink wrap */
+    width: fit-content !important;
+    max-width: 75vw !important;
+    padding: 12px 18px !important;
+    border-radius: 18px !important;
+    background-color: #204030 !important;
+    color: #ffffff !important;
+    margin-left: auto !important; /* push firmly right */
+    margin-right: 0 !important;
+}
+
+[data-theme="light"] [data-testid="stChatMessage"]:has(.dm-user-hook) [data-testid="stMarkdownContainer"]:not(:has(.dm-user-hook)) {
+    background-color: #d1f0d1 !important;
+    color: #000000 !important;
+}
+
+/* Force inner text right and remove native P margins */
+[data-testid="stChatMessage"]:has(.dm-user-hook) [data-testid="stMarkdownContainer"]:not(:has(.dm-user-hook)) * {
+    color: inherit !important;
+    text-align: right !important;
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+}
+
+/* Hide the invisible hook completely */
+[data-testid="stChatMessage"]:has(.dm-user-hook) [data-testid="stMarkdownContainer"]:has(.dm-user-hook) {
+    display: none !important;
+}
+
+
 /* ═══════════════════════════════════════════════════════════════════
    LIGHT MODE OVERRIDES — triggered by Streamlit's data-theme="light"
    ═══════════════════════════════════════════════════════════════════ */
@@ -1130,7 +1183,7 @@ setInterval(() => {
     }
 
     // ──────────────────────────────────────────
-    // CHAT MESSAGE LAYOUT (ChatGPT Style)
+    // CHAT MESSAGE LAYOUT (Copy Button Only)
     // ──────────────────────────────────────────
     const msgs = parent.querySelectorAll('[data-testid="stChatMessage"]');
     
@@ -1141,8 +1194,6 @@ setInterval(() => {
         
         const hook = msg.querySelector('.dm-user-hook');
         const isUser = !!hook;
-        // Hide the hook to prevent spacing issues
-        if (hook) hook.style.display = 'none';
 
         // Message body is the 2nd generic div inside stChatMessage
         const msgBody = msg.children.length > 1 ? msg.children[1] : msg;
@@ -1164,6 +1215,9 @@ setInterval(() => {
                     const clone = c.cloneNode(true);
                     if (clone.querySelector('.custom-copy-wrap')) {
                         clone.querySelector('.custom-copy-wrap').remove();
+                    }
+                    if (clone.querySelector('.dm-user-hook')) {
+                        clone.querySelector('.dm-user-hook').remove();
                     }
                     textToCopy += clone.innerText + '\n\n';
                 });
@@ -1187,66 +1241,18 @@ setInterval(() => {
             btnWrapper.style.display = 'flex';
             btnWrapper.style.width = '100%';
             btnWrapper.style.paddingTop = '8px';
+            
+            // Align copy button based on user/AI
+            if (isUser) {
+                btnWrapper.style.justifyContent = 'flex-end';
+            } else {
+                btnWrapper.style.justifyContent = 'flex-start';
+            }
+
             btnWrapper.appendChild(btn);
             
             // Append the copy button wrapper to the message body
             msgBody.appendChild(btnWrapper);
-        }
-
-        if (isUser) {
-            // -- USER MESSAGE: Align RIGHT --
-            msg.style.setProperty('flex-direction', 'row-reverse', 'important');
-            msgBody.style.setProperty('display', 'flex', 'important');
-            msgBody.style.setProperty('flex-direction', 'column', 'important');
-            msgBody.style.setProperty('align-items', 'flex-end', 'important');
-            msgBody.style.setProperty('width', '100%', 'important');
-            
-            // The copy button should be on the right side
-            const copyWrap = msg.querySelector('.custom-copy-wrap');
-            if (copyWrap) copyWrap.style.setProperty('justify-content', 'flex-end', 'important');
-
-            // Style the text bubble
-            const allMd = msg.querySelectorAll('[data-testid="stMarkdownContainer"]');
-            allMd.forEach(md => {
-                md.style.setProperty('padding', '12px 18px', 'important');
-                md.style.setProperty('border-radius', '18px', 'important');
-                md.style.setProperty('display', 'inline-block', 'important');
-                md.style.setProperty('text-align', 'left', 'important');
-                
-                if (isLight) {
-                    md.style.setProperty('background-color', '#d1f0d1', 'important');
-                    md.style.setProperty('color', '#000000', 'important');
-                    md.querySelectorAll('*').forEach(e => e.style.setProperty('color', '#000000', 'important'));
-                } else {
-                    md.style.setProperty('background-color', '#204030', 'important');
-                    md.style.setProperty('color', '#ffffff', 'important');
-                    md.querySelectorAll('*').forEach(e => e.style.setProperty('color', '#ffffff', 'important'));
-                }
-            });
-        } else {
-            // -- AI MESSAGE: Align LEFT --
-            msg.style.setProperty('flex-direction', 'row', 'important');
-            msgBody.style.setProperty('align-items', 'flex-start', 'important');
-            
-            // The copy button should be on the left side
-            const copyWrap = msg.querySelector('.custom-copy-wrap');
-            if (copyWrap) copyWrap.style.setProperty('justify-content', 'flex-start', 'important');
-            
-            // Remove user specific bubbling
-            const allMd = msg.querySelectorAll('[data-testid="stMarkdownContainer"]');
-            allMd.forEach(md => {
-                md.style.removeProperty('padding');
-                md.style.removeProperty('border-radius');
-                md.style.removeProperty('display');
-                md.style.removeProperty('background-color');
-                if (isLight) {
-                    md.style.setProperty('color', '#000000', 'important');
-                    md.querySelectorAll('p, li, span').forEach(e => e.style.setProperty('color', '#000000', 'important'));
-                } else {
-                    md.style.removeProperty('color');
-                    md.querySelectorAll('p, li, span').forEach(e => e.style.removeProperty('color'));
-                }
-            });
         }
     });
 
