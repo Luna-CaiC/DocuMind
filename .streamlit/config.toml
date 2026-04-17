@@ -4,7 +4,3 @@ primaryColor = "#10a37f"
 
 [browser]
 gatherUsageStats = false
-
-[client]
-showSidebarNavigation = true
-toolbarMode = "viewer"
