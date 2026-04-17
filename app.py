@@ -76,6 +76,11 @@ html, body, .stApp,
     font-family: 'Inter', -apple-system, sans-serif !important;
 }
 
+/* Remove default Streamlit top padding to move everything UP */
+[data-testid="stAppViewContainer"] > div:first-child > div:first-child {
+    padding-top: 0 !important;
+}
+
 /* ── Top header ──────────────────────────────────────────────────── */
 [data-testid="stHeader"] {
     border-bottom: 1px solid rgba(128,128,128,0.12) !important;
@@ -158,7 +163,7 @@ html, body, .stApp,
 /* ── Main area layout ────────────────────────────────────────────── */
 .main .block-container {
     max-width: 780px !important;
-    padding: 0.5rem 2rem 140px !important;
+    padding: 0 2rem 140px !important;
     margin: 0 auto !important;
 }
 
@@ -166,11 +171,14 @@ html, body, .stApp,
 .sticky-header {
     position: sticky;
     top: 0;
+    margin-top: -1rem; /* Pull up to the very top */
     background-color: var(--background-color);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     z-index: 1000;
-    padding: 1.2rem 0 1rem 0;
+    padding: 2rem 0 1rem 0;
     border-bottom: 1px solid rgba(128,128,128,0.1);
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .main h1 {
