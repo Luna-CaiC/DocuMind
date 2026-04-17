@@ -123,6 +123,7 @@ html, body, .stApp,
     background: transparent !important;
     border: 1px solid rgba(128,128,128,0.2) !important;
     border-radius: 8px !important;
+    color: var(--text-color) !important;
     font-size: 0.79rem !important;
     text-align: left !important;
     padding: 7px 10px !important;
@@ -520,7 +521,7 @@ with st.sidebar:
     st.markdown("""
     <div style="display:flex;align-items:center;gap:10px;padding:4px 4px 12px;">
         <span style="font-size:1.4rem;">🤖</span>
-        <span style="font-weight:700;font-size:1rem;color:#ececec;letter-spacing:-0.3px;">DocuMind</span>
+        <span style="font-weight:700;font-size:1rem;color:var(--text-color);letter-spacing:-0.3px;">DocuMind</span>
     </div>
     """, unsafe_allow_html=True)
 
@@ -642,7 +643,7 @@ with st.sidebar:
     # ── Powered-by footer ─────────────────────────────────────────────
     st.markdown("""
     <div style="position:fixed;bottom:16px;left:12px;right:12px;
-                text-align:center;font-size:0.72rem;color:#444;">
+                text-align:center;font-size:0.72rem;color:var(--text-color);opacity:0.5;">
         Groq · Llama 3.3 · Gemini · ChromaDB
     </div>
     """, unsafe_allow_html=True)
