@@ -158,14 +158,26 @@ html, body, .stApp,
 /* ── Main area layout ────────────────────────────────────────────── */
 .main .block-container {
     max-width: 780px !important;
-    padding: 2rem 2rem 140px !important;
+    padding: 0.5rem 2rem 140px !important;
     margin: 0 auto !important;
 }
+
+/* ── Sticky Header ───────────────────────────────────────────────── */
+.sticky-header {
+    position: sticky;
+    top: 0;
+    background-color: var(--background-color);
+    z-index: 1000;
+    padding: 1.2rem 0 1rem 0;
+    border-bottom: 1px solid rgba(128,128,128,0.1);
+    margin-bottom: 1rem;
+}
+
 .main h1 {
     font-size: 1.45rem !important;
     font-weight: 700 !important;
     letter-spacing: -0.3px !important;
-    margin-bottom: 2px !important;
+    margin: 0 !important;
 }
 
 /* ── Chat messages ───────────────────────────────────────────────── */
@@ -652,13 +664,14 @@ with st.sidebar:
 # ────────────────────────────────────────────────────────────────────
 # MAIN CHAT INTERFACE
 # ────────────────────────────────────────────────────────────────────
-st.markdown('<h1>DocuMind</h1>', unsafe_allow_html=True)
-st.markdown(
-    '<p class="subtitle-text">AI-powered document assistant — '
-    'Upload your files in the sidebar, then ask anything. '
-    'Answers are grounded strictly in your documents.</p>',
-    unsafe_allow_html=True,
-)
+st.markdown('''
+<div class="sticky-header">
+    <h1>DocuMind</h1>
+    <p class="subtitle-text">AI-powered document assistant — 
+    Upload your files in the sidebar, then ask anything. 
+    Answers are grounded strictly in your documents.</p>
+</div>
+''', unsafe_allow_html=True)
 
 # Read-only banner
 if st.session_state.viewing_history:
