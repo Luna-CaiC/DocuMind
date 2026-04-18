@@ -47,10 +47,16 @@ When you actually ask a question, DocuMind retrieves the most relevant chunks fr
 Ensure you have **Python 3.10+** installed.
 
 ### 2. Installation
-Clone the repository and install the dependencies:
+Clone the repository and set up a virtual environment (recommended):
 ```bash
 git clone https://github.com/Luna-CaiC/DocuMind.git
 cd DocuMind
+
+# 1. Create and activate a Virtual Environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# 2. Install dependencies
 pip install -r requirements.txt
 ```
 
@@ -64,9 +70,9 @@ GROQ_MODEL=llama-3.3-70b-versatile
 ```
 
 ### 4. Running the App
-Start the Streamlit server:
+Start the Streamlit server (using `python -m` ensures strict environment binding and prevents caching issues):
 ```bash
-streamlit run app.py
+python -m streamlit run app.py
 ```
 
 ---
