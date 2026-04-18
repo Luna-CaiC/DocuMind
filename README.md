@@ -26,18 +26,18 @@ Turning your text into searchable vectors is done completely *locally* on your m
 When you actually ask a question, DocuMind retrieves the most relevant chunks from ChromaDB and sends them to the LLM.
 *   **Groq LPU Processing**: The reading and answering is handled by **Groq running Llama-3.3**. Because Groq uses specialized Linear Processing Units (LPUs) instead of traditional GPUs, it types out highly intelligent answers almost instantaneously. This hybrid approach (local embeddings + highly optimized cloud inference) gives you the best of both speed and cost-efficiency.
 
-*(Bonus: The frontend features a professional, native-feeling UI built in Streamlit that seamlessly adapts to your system's Light or Dark mode.)*
+
 
 ---
 
 ## 🛠️ Technical Stack at a Glance
 
-- **RAG Orchestration**: LangChain
-- **The "Brain" (LLM)**: Groq (Llama-3.3) for extreme speed, Google Gemini for Vision/OCR
-- **The "Memory" (Vector DB)**: ChromaDB
-- **Text-to-Vector Math**: Sentence-Transformers (Local embedding via HuggingFace)
-- **File Extractors**: PyMuPDF, python-docx, Pillow
-- **UI & Framework**: Streamlit
+- **RAG Orchestration**: [LangChain](https://www.langchain.com/)
+- **The "Brain" (LLM)**: [Groq](https://groq.com/) (Llama-3.3) for extreme speed, [Google Gemini](https://ai.google.dev/) for Vision/OCR
+- **The "Memory" (Vector DB)**: [ChromaDB](https://www.trychroma.com/)
+- **Text-to-Vector Math**: [Sentence-Transformers](https://sbert.net/) (Local embedding via [HuggingFace](https://huggingface.co/))
+- **File Extractors**: [PyMuPDF](https://pymupdf.readthedocs.io/), [python-docx](https://python-docx.readthedocs.io/), [Pillow](https://python-pillow.org/)
+- **UI & Framework**: [Streamlit](https://streamlit.io/)
 
 ---
 
@@ -55,10 +55,10 @@ pip install -r requirements.txt
 ```
 
 ### 3. Environment Configuration
-Create a `.env` file in the root directory and add your API keys:
+Create a `.env` file in the root directory and add your API keys (replace the placeholders with your actual keys):
 ```env
-GROQ_API_KEY=your_groq_api_key
-GOOGLE_API_KEY=your_google_api_key
+GROQ_API_KEY=<PASTE_YOUR_ACTUAL_GROQ_KEY_HERE>
+GOOGLE_API_KEY=<PASTE_YOUR_ACTUAL_GOOGLE_KEY_HERE>
 GEMINI_MODEL=gemini-2.0-flash
 GROQ_MODEL=llama-3.3-70b-versatile
 ```
