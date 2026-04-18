@@ -1,41 +1,43 @@
-# DocuMind — AI-Powered Document Assistant 🤖
+# DocuMind: High-Performance RAG Document Assistant
 
-**DocuMind** is a professional RAG (Retrieval-Augmented Generation) application that allows you to chat with your documents. Whether it's a standard PDF, a complex Word file, or even an image-based document, DocuMind uses high-performance LLMs and Vision models to provide accurate, citation-backed answers.
+**DocuMind** is an advanced Retrieval-Augmented Generation (RAG) system engineered to provide low-latency, highly accurate conversational interfaces over multi-modal documents. It parses text, handles complex formats (like Word tables), and seamlessly falls back to Vision AI for image-based PDFs and standalone images, grounding every response strictly in the ingested corpus.
 
 ---
 
-## 🌟 Key Features
+## ⚙️ System Architecture & RAG Pipeline
 
-### 📄 Multi-Format Support
-- **Text PDFs**: High-speed parsing for standard text-based documents.
-- **Image-Based PDFs**: Automatically runs Gemini Vision OCR for scanned files or slides.
-- **Word Documents (.docx)**: Comprehensive extraction including tables and text boxes.
-- **Standalone Images**: Upload JPG, PNG, or WEBP files to chat with visual data, charts, or diagrams.
+DocuMind's architecture is designed for robust data ingestion and high-speed retrieval:
 
-### 🌓 Professional UI & Themes
-- **Modern Interface**: A clean, GPT-style layout designed for productivity.
-- **Adaptive Themes**: Fully supports **Light**, **Dark**, and **System** modes natively. The UI adjusts every element (sidebar, inputs, and avatars) to match your preference perfectly.
-- **Responsive Design**: Works across different screen sizes with a sidebar-integrated document management system.
+### 1. Multi-Modal Document Ingestion Setup
+The ingestion pipeline (`src/ingest.py`) dynamically routes documents based on format, handling edge cases that standard parsers miss:
+*   **Text PDFs**: Processed via `PyMuPDF` for high-fidelity text extraction.
+*   **Image-Heavy PDFs & Scans**: The system detects low-character density pages and automatically invokes **Google Gemini 2.0 Flash Vision OCR**. It chunks the document into image batches and processes them via the Vision API to extract text and describe diagrams.
+*   **Word Documents (.docx)**: Utilizes `python-docx` to extract structured paragraphs and tables. It implements a raw XML `<w:t>` parsing fallback mechanism to rescue text trapped in unsupported shapes or customized text boxes.
+*   **Standalone Images**: Processes formats like PNG and JPEG directly through the Vision LLM to convert visual data into searchable text documents.
 
-### 🧠 Advanced RAG Engine
-- **Fast Responses**: Powered by **Groq (Llama 3.3)** for near-instant inference.
-- **Vision OCR**: Powered by **Google Gemini 2.0 Flash** for high-quality visual context.
-- **Local Embeddings**: Uses HuggingFace `all-MiniLM-L6-v2` locally to ensure data efficiency and stability.
-- **Citation Tracking**: Every response is grounded in your source documents, with filenames labeled at the chunk level.
+### 2. Chunking & Local Vectorization
+*   **Text Splitter**: Uses LangChain's `RecursiveCharacterTextSplitter` (chunk size: 1000, overlap: 200) to maintain semantic integrity.
+*   **Context Injection**: Explicitly injects the source document filename into *every single chunk* `[Source Document: filename]`. This ensures the LLM always has strict traceability back to the source file, regardless of how deep the chunk was in the original document.
+*   **Local Embeddings**: Deploys HuggingFace's `all-MiniLM-L6-v2` embedding model locally. This eliminates embedding API costs and network latency during the vectorization phase.
 
-### 💾 Persistent Sessions
-- **Session History**: Automatically saves your chat sessions and metadata locally.
-- **Session Resumption**: Resume any past conversation; DocuMind retains the context and message history.
+### 3. Vector Storage & Session Management
+*   **Database**: Utilizes **ChromaDB** for fast, local vector storage. 
+*   **Persistence**: The `ChatHistoryManager` (`src/history.py`) maintains isolated vector stores and raw file caches for each conversation ID. Users can drop off and resume sessions days later without re-uploading or re-embedding documents.
+
+### 4. High-Speed Inference (LLM)
+*   **Generation**: Retrieval chains are powered by **Groq** using the `llama-3.3-70b-versatile` model. By leveraging Groq's LPU inference engine, DocuMind generates comprehensive, context-aware answers almost instantaneously once the context window is populated by ChromaDB.
+
+*Note: The frontend is built with Streamlit, featuring a custom-engineered CSS architecture that provides a seamless, native-feeling Light/Dark/System theme switcher.*
 
 ---
 
 ## 🛠️ Technical Stack
 
-- **Frontend**: [Streamlit](https://streamlit.io/)
-- **Orchestration**: [LangChain](https://www.langchain.com/)
-- **Inference**: [Groq](https://groq.com/) & [Google Gemini](https://ai.google.dev/)
-- **Vector Database**: [ChromaDB](https://www.trychroma.com/)
-- **Embeddings**: Sentence-Transformers (Local)
+- **Frontend**: Streamlit
+- **Orchestration**: LangChain
+- **Inference**: Groq & Google Gemini
+- **Vector Database**: ChromaDB
+- **Embeddings**: Sentence-Transformers (Local `all-MiniLM-L6-v2`)
 - **Document Parsing**: PyMuPDF (fitz), python-docx, Pillow
 
 ---
@@ -70,22 +72,5 @@ streamlit run app.py
 
 ---
 
-## 📸 Interface Showcase
-
-| Dark Mode | Light Mode |
-| :---: | :---: |
-| ![Dark Mode](file:///Users/lucky/.gemini/antigravity/brain/e64e1258-349d-4774-9e54-ccd4bc0ce432/media__1776384326755.png) | ![Light Mode](file:///Users/lucky/.gemini/antigravity/brain/e64e1258-349d-4774-9e54-ccd4bc0ce432/media__1776384334105.png) |
-
----
-
-## 📁 Project Structure
-- `app.py`: Main entry point and UI logic.
-- `src/ingest.py`: Document processing, OCR, and vectorization pipeline.
-- `src/history.py`: Local session and chat history management.
-- `data/`: Local storage for vector indexes, session files, and history JSON.
-- `.streamlit/config.toml`: Custom theme colors and app configuration.
-
----
-
 ## 📜 License
-This project is licensed under the MIT License.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
